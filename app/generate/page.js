@@ -1,7 +1,9 @@
 'use client';
 
 import { useSession, signIn, signOut } from 'next-auth/react';
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 const moods = [
   'Happy', 'Sad', 'Relaxed', 'Energetic', 'Romantic', 'Workout',
@@ -11,7 +13,6 @@ const moods = [
 
 export default function GeneratePage() {
   const { data: session } = useSession();
-
   const [selectedMood, setSelectedMood] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [numSongs, setNumSongs] = useState(10);
@@ -20,13 +21,13 @@ export default function GeneratePage() {
   const [currentVideoId, setCurrentVideoId] = useState('');
   const [playlist, setPlaylist] = useState([]);
 
-  // Load playlist from localStorage
+  // Load playlist
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem('userPlaylist') || '[]');
     setPlaylist(saved);
   }, []);
 
-  // Save playlist to localStorage
+  // Save playlist
   useEffect(() => {
     localStorage.setItem('userPlaylist', JSON.stringify(playlist));
   }, [playlist]);
@@ -85,20 +86,13 @@ export default function GeneratePage() {
       <div className="w-full max-w-6xl flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
         <h1 className="text-4xl font-bold text-center md:text-left">Generate Playlist</h1>
         <div className="flex items-center gap-4 mt-4 md:mt-0">
-  <a
-    href="/playlist"
-    className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition-colors"
-  >
-    My Playlist
-  </a>
-  <a
-    href="/"
-    className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 transition-colors"
-  >
-    Home
-  </a>
-</div>
-
+          <Link href="/playlist">
+            <button className="px-4 py-2 bg-green-600 rounded hover:bg-green-700 transition-colors">My Playlist</button>
+          </Link>
+          <Link href="/">
+            <button className="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700 transition-colors">Home</button>
+          </Link>
+        </div>
         <div className="flex items-center gap-4">
           <span className="text-gray-300 hidden sm:inline">Hi, {session.user.name}</span>
           <button
@@ -108,10 +102,7 @@ export default function GeneratePage() {
             Logout
           </button>
         </div>
-        
       </div>
-
-      
 
       {/* Search + Number of Songs */}
       <div className="w-full max-w-4xl mb-6 flex flex-col md:flex-row gap-4 items-center justify-center">
@@ -141,9 +132,7 @@ export default function GeneratePage() {
             <button
               key={mood}
               onClick={() => { setSelectedMood(mood); setSearchQuery(''); }}
-              className={`px-4 py-2 rounded-full border-2 border-purple-600 ${
-                selectedMood === mood ? 'bg-purple-600 text-white' : 'text-purple-400'
-              } hover:bg-purple-700 hover:text-white transition-colors`}
+              className={`px-4 py-2 rounded-full border-2 border-purple-600 ${selectedMood === mood ? 'bg-purple-600 text-white' : 'text-purple-400'} hover:bg-purple-700 hover:text-white transition-colors`}
             >
               {mood}
             </button>
@@ -182,7 +171,13 @@ export default function GeneratePage() {
       <div className="mt-10 w-full max-w-6xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {videos.map(video => (
           <div key={video.id} className="bg-slate-800 rounded-lg overflow-hidden shadow-lg">
-            <img src={video.thumbnail} alt={video.title} className="w-full h-48 object-cover" />
+            <Image
+              src={video.thumbnail}
+              alt={video.title}
+              width={400}
+              height={225}
+              className="w-full h-48 object-cover"
+            />
             <div className="p-4 flex flex-col gap-2">
               <h3 className="font-bold text-lg line-clamp-2">{video.title}</h3>
               <p className="text-gray-400 text-sm">{video.channelTitle}</p>
@@ -193,23 +188,21 @@ export default function GeneratePage() {
                 >
                   Play
                 </button>
-
                 <button
-  onClick={() => {
-    addToPlaylist({
-      id: video.id,
-      title: video.title,
-      thumbnail: video.thumbnail,
-      mood: selectedMood || searchQuery,
-      addedAt: new Date().toISOString(),
-    });
-    alert(`Added "${video.title}" to playlist!`);
-  }}
-  className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors text-sm"
->
-  Add to Playlist
-</button>
-
+                  onClick={() => {
+                    addToPlaylist({
+                      id: video.id,
+                      title: video.title,
+                      thumbnail: video.thumbnail,
+                      mood: selectedMood || searchQuery,
+                      addedAt: new Date().toISOString(),
+                    });
+                    alert(`Added "${video.title}" to playlist!`);
+                  }}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors text-sm"
+                >
+                  Add to Playlist
+                </button>
               </div>
             </div>
           </div>
