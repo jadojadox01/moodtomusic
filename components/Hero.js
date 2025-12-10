@@ -1,8 +1,7 @@
-// components/Hero.js
 'use client';
 
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { useSession, signIn } from 'next-auth/react';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -17,7 +16,21 @@ const pulse = {
   scale: [1, 1.05, 1],
   transition: { duration: 0.5, repeat: Infinity }
 };
+
 export default function Hero() {
+  const { data: session } = useSession();
+
+  const handleGenerate = () => {
+    if (!session) {
+      // user not signed in → open Google sign-in
+      signIn('google', { callbackUrl: '/' }); 
+    } else {
+      // user is signed in → generate playlist
+      // redirect to playlist page or call your API
+      window.location.href = '/generate'; // example
+    }
+  };
+
   return (
     <section id="home" className="min-h-screen flex items-center pt-20 pb-16">
       <div className="container mx-auto px-4 text-center">
@@ -45,14 +58,14 @@ export default function Hero() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             animate={pulse}
+            onClick={handleGenerate} // ← handle sign-in + generate
             className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full text-lg"
           >
-            <Link href="/generate">Get Your Playlist</Link>
+            Get Your Playlist
           </motion.button>
 
         </motion.div>
       </div>
     </section>
   );
-};
-
+}

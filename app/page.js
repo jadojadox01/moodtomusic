@@ -3,6 +3,7 @@ import Hero from '@/components/Hero';
 import HowItWorks from '@/components/HowItWorks';
 import Features from '@/components/Features';
 import Footer from '@/components/Footer'; 
+import Providers from './Providers';
 
 export default function Home() {
   return (
@@ -12,11 +13,13 @@ export default function Home() {
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
     rel="stylesheet"
   />
+  <Providers>
       <Header />
       <Hero />
       <HowItWorks />
       <Features />
       <Footer />
+      </Providers>
     </div>
   );
 }
